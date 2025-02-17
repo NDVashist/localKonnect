@@ -18,7 +18,7 @@ const App: React.FC = () => {
           component={OnboardingScreen}
           options={{ headerShown:false,}} 
         />
-        <Stack.Screen name="Signin" component={Signin}   />
+        <Stack.Screen name="SignIn" component={Signin}   />
       </Stack.Navigator>
     </NavigationContainer>
   );
