@@ -1,5 +1,5 @@
 // OnboardingScreen.tsx
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   View,
@@ -47,7 +47,7 @@ const onboardingData: OnboardingData[] = [
 const OnboardingScreen: React.FC = () => {
   const [showRealApp, setShowRealApp] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const renderItem = ({item}: any) => {
+  const renderItem = ({ item }: any) => {
     return (
       <View style={styles.slide}>
         <Image source={item.image} style={styles.image} />
