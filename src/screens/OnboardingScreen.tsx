@@ -77,12 +77,7 @@ const OnboardingScreen: React.FC = () => {
   );
 
   const onDone = () => {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'SignIn' }],
-      })
-    );
+    navigation.navigate("SignIn");
   };
 
   const goToSpecificSlide = (index: number) => {
