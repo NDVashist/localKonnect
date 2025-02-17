@@ -1,16 +1,9 @@
-import React, { useRef, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import {
-  CommonActions,
-  useNavigation,
-} from '@react-navigation/native';
+import {CommonActions, StackActions, useNavigation} from '@react-navigation/native';
+import { useTheme } from '../theme/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const onboardingData = [
   {
@@ -34,11 +27,12 @@ const onboardingData = [
 ];
 
 const OnboardingScreen: React.FC = () => {
+  const {colors, colorScheme} = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef(null);
   const navigation = useNavigation();
 
-  const renderItem = ({ item }: any) => (
+  const renderItem = ({item}: any) => (
     <View style={styles.slide}>
       <Image source={item.image} style={styles.image} />
       <View style={styles.content}>
@@ -53,7 +47,7 @@ const OnboardingScreen: React.FC = () => {
               onPress={() => goToSpecificSlide(index)}
               style={[
                 styles.paginationDot,
-                index === currentIndex ? styles.activeDot : null,
+                index === currentIndex ? {backgroundColor: colors.primary} : {},
               ]}
             />
           ))}
@@ -61,30 +55,38 @@ const OnboardingScreen: React.FC = () => {
 
         {/* Controls */}
         <View style={styles.controls}>
-          <Text style={styles.text} onPress={() => goToSpecificSlide(onboardingData.length - 1)}>
-            Skip
-          </Text>
-          <Text style={styles.text}>{currentIndex + 1}/{onboardingData.length}</Text>
           <Text
             style={styles.text}
-            onPress={() => goToSpecificSlide(currentIndex + 1)}
-          >
-            {currentIndex === onboardingData.length - 1 ? 'Done' : 'Next'}
+            onPress={() => goToSpecificSlide(onboardingData.length - 1)}>
+            Skip
           </Text>
+          <Text style={styles.text}>
+            {currentIndex + 1}/{onboardingData.length}
+          </Text>
+          {currentIndex === onboardingData.length - 1 ? (
+            <Text style={styles.text} onPress={onDone}>
+              Done
+            </Text>
+          ) : (
+            <Text
+              style={styles.text}
+              onPress={() => goToSpecificSlide(currentIndex + 1)}>
+              Next
+            </Text>
+          )}
         </View>
       </View>
     </View>
   );
 
   const onDone = () => {
-    navigation.navigate("SignIn");
+    AsyncStorage.setItem('isBordingSeen', 'true');
+    navigation.dispatch(
+      StackActions.push('SignIn')
+    );
   };
 
   const goToSpecificSlide = (index: number) => {
-    if (index >= onboardingData.length) {
-      onDone();
-      return;
-    }
     sliderRef?.current?.goToSlide(index);
     setCurrentIndex(index);
   };
@@ -109,14 +111,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   paginationDot: {
-    width: 10,
-    height: 10,
+    width: 30,
+    height: 8,
     borderRadius: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     margin: 5,
-  },
-  activeDot: {
-    backgroundColor: 'white',
   },
   controls: {
     flexDirection: 'row',
@@ -146,9 +145,10 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: 40,
+    gap: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     textAlign: 'center',
+    lineHeight: 25,
   },
 });
 
