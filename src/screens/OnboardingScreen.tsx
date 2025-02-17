@@ -42,7 +42,7 @@ const onboardingData: OnboardingData[] = [
   },
 ];
 
-const OnboardingScreen: React.FC = () => {
+const OnboardingScreen: React.FC = ({navigation}) => {
   const [showRealApp, setShowRealApp] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef(null);
@@ -88,6 +88,7 @@ const OnboardingScreen: React.FC = () => {
   };
   const onDone = () => {
     setShowRealApp(true);
+    navigation.navigate('SignIn');
   };
   const onSlideChange = (index: number) => {
     setCurrentIndex(index);
