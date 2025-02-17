@@ -1,15 +1,13 @@
 // OnboardingScreen.tsx
-import React, { useState } from 'react';
+import React, {useRef, useState} from 'react';
 import {
-  ScrollView,
   View,
   StyleSheet,
-  FlatList,
   Image,
   Text,
-  StatusBar,
+  Touchable,
+  TouchableOpacity,
 } from 'react-native';
-import OnboardingPage from '../components/OnboardingPage';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 interface OnboardingData {
@@ -47,7 +45,9 @@ const onboardingData: OnboardingData[] = [
 const OnboardingScreen: React.FC = () => {
   const [showRealApp, setShowRealApp] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const renderItem = ({ item }: any) => {
+  const sliderRef = useRef(null);
+
+  const renderItem = ({item}: any) => {
     return (
       <View style={styles.slide}>
         <Image source={item.image} style={styles.image} />
@@ -58,7 +58,8 @@ const OnboardingScreen: React.FC = () => {
           <View style={styles.pagination}>
             {onboardingData.map((data, index) => {
               return (
-                <View
+                <TouchableOpacity
+                  onPress={() => goToSpecificSlide(index)}
                   key={index}
                   style={[
                     styles.paginationDot,
@@ -68,8 +69,18 @@ const OnboardingScreen: React.FC = () => {
               );
             })}
           </View>
-          <View>
+          <View style={styles.controls}>
+            <Text
+              style={styles.text}
+              onPress={() => goToSpecificSlide(onboardingData.length - 1)}>
+              Skip
+            </Text>
             <Text style={styles.text}>{currentIndex}</Text>
+            <Text
+              style={styles.text}
+              onPress={() => goToSpecificSlide(currentIndex + 1)}>
+              {currentIndex === onboardingData.length - 1 ? 'Done' : 'Next'}
+            </Text>
           </View>
         </View>
       </View>
@@ -77,18 +88,21 @@ const OnboardingScreen: React.FC = () => {
   };
   const onDone = () => {
     setShowRealApp(true);
-    setCurrentIndex(onboardingData.length - 1);
   };
   const onSlideChange = (index: number) => {
     setCurrentIndex(index);
   };
-  return showRealApp ? (
-    <View style={styles.container}>
-      {/* Main app screen goes here */}
-      <Text style={styles.text}>Welcome to the main app!</Text>
-    </View>
-  ) : (
+  const goToSpecificSlide = (index: number) => {
+    if (index >= onboardingData.length) {
+      onDone();
+      return;
+    }
+    sliderRef?.current?.goToSlide(index);
+    setCurrentIndex(index);
+  };
+  return (
     <AppIntroSlider
+      ref={sliderRef}
       renderItem={renderItem}
       data={onboardingData}
       onDone={onDone}
@@ -116,6 +130,12 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     backgroundColor: 'purple',
+  },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 20,
   },
   container: {
     flex: 1,
