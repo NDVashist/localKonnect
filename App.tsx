@@ -1,16 +1,26 @@
 import React from 'react';
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { useTheme } from './src/theme/theme';
+import Signin from './src/screens/Signin';
 
+const Stack = createNativeStackNavigator();
 const App: React.FC = () => {
-  const {colors, colorScheme} = useTheme();
+  const { colors, colorScheme } = useTheme();
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={(colorScheme === 'dark') ? 'light-content' : 'dark-content'} />
-      <OnboardingScreen />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='OnBoarding'>
+        <Stack.Screen  
+          name="OnBoarding"
+          component={OnboardingScreen}
+          options={{ headerShown:false,}} 
+        />
+        <Stack.Screen name="Signin" component={Signin}   />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
