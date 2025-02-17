@@ -31,20 +31,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
-
-
-const MyStack = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: 'Welcome' }}
-        />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
